@@ -22,7 +22,6 @@ class CorpusText:
             result += self.uninorm(c)
         self.chars = list(result)
         self.filename = filename
-        self.length = len(self.chars)
 
     def __repr__(self):
         return "<Corpus of '%s' keystrokes:%s>" % (self.filename, self.length)
@@ -47,7 +46,7 @@ class CorpusText:
     def stats(self):
         """ Return sorted list (key, count, percent """
         frequencies = Counter(self.chars)
-        statistics = [(c, frequencies[c], frequencies[c] / self.length) for c in frequencies]
+        statistics = [(c, frequencies[c], frequencies[c] / len(self.chars)) for c in frequencies]
         statistics.sort(key=lambda x: x[2], reverse=True)
         return statistics
 
@@ -126,4 +125,4 @@ if __name__ == '__main__':
     print("Statistics")
     stats = corpus.stats()
     print_stats(stats, 9)
-    print("Total keystrokes in file: {}".format(corpus.length))
+    print("Total keystrokes in file: {}".format(len(corpus.chars)))
