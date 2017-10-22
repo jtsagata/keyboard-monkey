@@ -10,11 +10,6 @@ class Typist:
         self.keyboard = the_keyboard
         self.corpus = the_corpus
         self.keyboard_name = the_keyboard.layout
-        self.reset()
-        self.exercise()
-        self.calculate_fitness()
-
-    def reset(self):
         self.hands = [0, 0]
         self.fingers = [0] * 10
         self.keystrokes = 0
@@ -25,16 +20,15 @@ class Typist:
         if len(self.corpus.chars) == 0:
             raise ValueError("Corpus have no data to train")
         for c in self.corpus.chars:
-            stats = keyboard.get_stats_for_key(c)
+            stats = self.keyboard.get_stats_for_key(c)
             if self.debug:
                 print("char:{} finger:{}, hand:{}, effort:{}".format(c, stats[0], stats[1], stats[2]))
             self.keystrokes += 1
             self.effort += stats[2]
             self.fingers[stats[0]] += 1
             self.hands[stats[1] - 1] += 1
-
-    def calculate_fitness(self):
         self.fitness = self.effort / self.keystrokes
+        return self
 
     def print_stats(self):
         print(self)
@@ -64,4 +58,6 @@ if __name__ == '__main__':
     keyboard = QuertyKeyboard
 
     session = Typist(keyboard, corpus)
+    session.exercise()
+
     session.print_stats()

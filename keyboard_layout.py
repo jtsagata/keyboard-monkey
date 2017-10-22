@@ -2,6 +2,7 @@
 import unicodedata
 import editdistance
 import random
+import copy
 
 def str_replace_at(s, newstring, index):
     # raise an error if index is outside of the string
@@ -41,9 +42,12 @@ class KeyboardLayout:
             if len(layout) != len(self.querty_layout):
                 raise ValueError('Bad lenght for keyboard layout. ')
             # Must be a rearrangement of querty
-            if ''.join(set(sorted(layout))) != ''.join(set(sorted(KeyboardLayout.querty_layout))):
-                raise ValueError('Bad keyboard layout. ')
             self.layout = layout
+            if not self.is_valid():
+                raise ValueError('Bad keyboard layout. ')
+
+    def is_valid(self):
+        return ''.join(sorted(self.layout)) == ''.join(sorted(KeyboardLayout.querty_layout))
 
     def mutate(self, mutations=3):
         l = [x for x in range(len(self))]
@@ -55,8 +59,24 @@ class KeyboardLayout:
             self[r2] = tmp
             # print("Swapping {}: {}<->{}".format(i,r1,r2))
 
+    def copy(self):
+        return type(self)(self.layout)
+
+    def sex(self,other):
+        l = [x for x in range(len(self))]
+        new_keyboard = self.copy()
+        mutations = len(self.layout) // 2
+        for i in range(mutations):
+            r1 = l.pop(random.randrange(len(l)))
+            # Find char in pos2 in other keyboard
+            r2 = other.layout.find( self.layout[r1])
+            tmp = new_keyboard[r1]
+            new_keyboard[r1] = new_keyboard[r2]
+            new_keyboard[r2] = tmp
+        return new_keyboard
+
     def distance(self, other_keyboard):
-        return editdistance.eval(self.layout, other_keyboard.the_layout)
+        return editdistance.eval(self.layout, other_keyboard.layout)
 
     def __len__(self):
         return len(self.layout)
@@ -77,7 +97,7 @@ class KeyboardLayout:
         res = ''
         for c in line:
             c = unicodedata.lookup('MIDDLE DOT') if c == '#' else c
-            c = "΄" if c == '#' else c
+            c = unicodedata.lookup('GREEK SMALL LETTER ALPHA WITH TONOS')if c == '@' else c
             res += " [{}] ".format(c)
         return res.center(60, ' ') + '\n'
 
@@ -114,8 +134,11 @@ QuertyKeyboard = KeyboardLayout()
 if __name__ == '__main__':
     print("A starting querty keyboard")
     print(QuertyKeyboard)
-    print("A starting querty keyboard with costs")
-    print(QuertyKeyboard.keybord_costs())
+    print()
+
+    # print("A starting querty keyboard with costs")
+    # print(QuertyKeyboard.keybord_costs())
+
 
     # print("\nA mutating keyboard")
     # alayout = KeyboardLayout("ΑΣΔΦΓΗΞΚΛ';@" + "«ΖΧΨΩΒΝΜ,./" + "W#ΕΡΤΥΘΙΟΠ[]")
