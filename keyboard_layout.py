@@ -32,18 +32,18 @@ class KeyboardLayout:
         [6,2,2.0], [7,2,2.0], [8,2,2.0], [9,2,2.0],[9,2,3.0]
     ]
 
-    the_layout = ''
+    layout = ''
 
     def __init__(self, layout=None):
         if layout is None:
-            self.the_layout = KeyboardLayout.querty_layout
+            self.layout = KeyboardLayout.querty_layout
         else:
             if len(layout) != len(self.querty_layout):
                 raise ValueError('Bad lenght for keyboard layout. ')
             # Must be a rearrangement of querty
             if ''.join(set(sorted(layout))) != ''.join(set(sorted(KeyboardLayout.querty_layout))):
                 raise ValueError('Bad keyboard layout. ')
-            self.the_layout = layout
+            self.layout = layout
 
     def mutate(self, mutations=3):
         l = [x for x in range(len(self))]
@@ -56,21 +56,21 @@ class KeyboardLayout:
             # print("Swapping {}: {}<->{}".format(i,r1,r2))
 
     def distance(self, other_keyboard):
-        return editdistance.eval(self.the_layout, other_keyboard.the_layout)
+        return editdistance.eval(self.layout, other_keyboard.the_layout)
 
     def __len__(self):
-        return len(self.the_layout)
+        return len(self.layout)
 
     def __getitem__(self, index):
-        return self.the_layout[index]
+        return self.layout[index]
 
     def __setitem__(self, key, value):
-        self.the_layout = str_replace_at(self.the_layout, value, key)
+        self.layout = str_replace_at(self.layout, value, key)
 
     def __str__(self):
-        line_a = self._print_keyboard_line(self.the_layout[0:12])
-        line_b = self._print_keyboard_line(self.the_layout[12:24])
-        line_c = self._print_keyboard_line(self.the_layout[24:])
+        line_a = self._print_keyboard_line(self.layout[0:12])
+        line_b = self._print_keyboard_line(self.layout[12:24])
+        line_c = self._print_keyboard_line(self.layout[24:])
         return (line_a + line_b + line_c).rstrip()
 
     def _print_keyboard_line(self, line):
@@ -82,27 +82,30 @@ class KeyboardLayout:
         return res.center(60, ' ') + '\n'
 
     def keybord_costs(self):
-        line_a = self._print_keyboard_line_cost(self.the_layout[0:12])
-        line_b = self._print_keyboard_line_cost(self.the_layout[12:24])
-        line_c = self._print_keyboard_line_cost(self.the_layout[24:])
+        line_a = self._print_keyboard_line_cost(self.layout[0:12])
+        line_b = self._print_keyboard_line_cost(self.layout[12:24])
+        line_c = self._print_keyboard_line_cost(self.layout[24:])
         return (line_a + line_b + line_c).rstrip()
 
     def _print_keyboard_line_cost(self, line):
         res1 = ''
         for c in line:
-            index = self.the_layout.find(c)
-            stats = self.efforts[index]
+            stats = self.get_stats_for_key(c)
             key = unicodedata.lookup('LEFT HAND TELEPHONE RECEIVER') if stats[1] == 1 else unicodedata.lookup('RIGHT HAND TELEPHONE RECEIVER')
             c = unicodedata.lookup('MIDDLE DOT') if c == '#' else c
             c = "΄" if c == '#' else c
             res1 += " ⎡{}   {}{}⎤ ".format(c,stats[0],key)
         res2 = ''
         for c in line:
-            index = self.the_layout.find(c)
-            stats = self.efforts[index]
+            stats = self.get_stats_for_key(c)
             res2 += " ⎣ {}  ⎦ ".format(stats[2])
-        return res1.center(140, ' ') + '\n'+res2.center(140, '_') + "\n\n"
+        return res1.center(120, ' ') + '\n'+res2.center(120, ' ') + "\n\n"
         # return res1 + '\n' + res2+ "\n\n"
+
+    def get_stats_for_key(self, c):
+        index = self.layout.find(c)
+        stats = self.efforts[index]
+        return stats
 
 
 # Some famous keyboards

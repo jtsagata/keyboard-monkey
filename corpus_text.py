@@ -7,7 +7,7 @@ from collections import Counter
 class CorpusText:
     chars = []
     filename = None
-    length = 0
+    debug = False
 
     valid_keystroke_chars = "W#ΕΡΤΥΘΙΟΠ[]"
     valid_keystroke_chars += "ΑΣΔΦΓΗΞΚΛ';@"
@@ -24,7 +24,7 @@ class CorpusText:
         self.filename = filename
 
     def __repr__(self):
-        return "<Corpus of '%s' keystrokes:%s>" % (self.filename, self.length)
+        return "<Corpus of '%s' keystrokes:%s>" % (self.filename, len(self.chars))
 
     def __str__(self):
         res = self.__repr__() + "\n"
@@ -69,7 +69,7 @@ class CorpusText:
         if unicode_name == 'GREEK SMALL LETTER IOTA WITH DIALYTIKA':
             no_accent_char_upper = 'Ι'
         if unicode_name == 'GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS':
-            no_accent_char_upper = 'Ι'
+            no_accent_char_upper = '@Ι'
         if unicode_name == 'RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK':
             no_accent_char_upper = '«'
         if unicode_name == 'RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK':
@@ -82,7 +82,8 @@ class CorpusText:
             if CorpusText.valid_keystroke_reject_chars.find(uni_char) <0:
                 # Don't report ascii printable characters
                 if not uni_char in string.printable:
-                    print("Reject char |{}| '{}'".format(unicode_name, uni_char))
+                    if CorpusText.debug is True:
+                        print("Reject char |{}| '{}'".format(unicode_name, uni_char))
                     CorpusText.valid_keystroke_reject_chars += uni_char
             return ''
 
@@ -117,12 +118,12 @@ if __name__ == '__main__':
     # path = 'data/longos_intro.txt'
     # path = 'data/alphabet.txt'
     path = 'data/longus.txt'
-    corpus = CorpusText(path, 20000)
-    print("Keystrokes")
+    # corpus = CorpusText(path, 200)
+    corpus = CorpusText(path)
     print_long_text(corpus.__str__())
 
     # Get some statistics from text
     print("Statistics")
     stats = corpus.stats()
     print_stats(stats, 9)
-    print("Total keystrokes in file: {}".format(len(corpus.chars)))
+    # print("Total keystrokes in file: {}".format(len(corpus.chars)))
