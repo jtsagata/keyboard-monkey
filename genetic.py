@@ -66,18 +66,18 @@ class Population:
 
     def keep_going(self):
         MAX_RUNS = 1000
-        N  = 10
+        moving_length  = 10
+        check_every = 20
         N2 = 3
-        if population.generation % N == 0:
-            conv = numpy.convolve(self.fintess_store, numpy.ones((N,))/N, mode='valid')
+        if population.generation % check_every == 0:
+            conv = numpy.convolve(self.fintess_store, numpy.ones((moving_length,))/moving_length, mode='valid')
             # If conv stays the same for N2 runs then pause
             last = conv[-N2:]
-            if math.isclose(numpy.mean(last),conv[-1],abs_tol=0.0001) and len(last) >= N2:
-                print("Convolution stop at ",conv[-1])
+            if math.isclose(numpy.mean(last),conv[-1],abs_tol=0.00001) and len(last) >= N2:
+                # print("Convolution stop at ",conv[-1])
                 return False
-            else:
-                if self.generation > 40:
-                    print("** Convolution",conv[-N2:])
+            # else:
+            #     print("** Convolution",conv[-N2:])
         return self.generation < MAX_RUNS
 
     def print_population(self, details=False):
@@ -109,5 +109,10 @@ if __name__ == '__main__':
         if not population.keep_going():
             break;
 
+    print("\nBest Keyboard:")
     best = population.keyboards[0]
     print(best)
+
+    print("\nStatistics:")
+    s=population.sessions[0]
+    s.print_stats()

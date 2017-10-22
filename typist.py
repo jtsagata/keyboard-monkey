@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import numpy
 from corpus_text import CorpusText
 from keyboard_layout import *
 
@@ -27,16 +28,30 @@ class Typist:
             self.effort += stats[2]
             self.fingers[stats[0]] += 1
             self.hands[stats[1] - 1] += 1
-        self.fitness = self.effort / self.keystrokes
+        self.calculate_fitness()
         return self
 
+    def calculate_fitness(self):
+        check_effort = self.effort / self.keystrokes
+        hand_effort = numpy.std(self.hands) / numpy.mean(self.hands)
+        fingers = list(filter(lambda x: x != 0.0, self.fingers))
+        finger_effort = numpy.std(fingers) / numpy.mean(fingers)
+        self.fitness = check_effort + hand_effort + finger_effort
+
     def print_stats(self):
-        print(self)
         if self.keystrokes > 0:
-            finger_freq = [x / session.keystrokes * 100 for x in session.fingers]
-            print(',  '.join('F{}:{:5.2f}%'.format(*k) for k in enumerate(finger_freq)))
-            hand_freq = [x / session.keystrokes * 100 for x in session.hands]
+            check_effort = self.effort / self.keystrokes
+            hand_effort = numpy.std(self.hands) / numpy.mean(self.hands)
+            fingers = list(filter(lambda x: x != 0.0, self.fingers))
+            finger_effort = numpy.std(fingers) / numpy.mean(fingers)
+            print('Typing effort: {:2.2}, Hand:{:2.2}, Fingers:{:2.2}'.format(check_effort, hand_effort,
+                                                                                 finger_effort))
+
+            hand_freq = [x / self.keystrokes * 100 for x in self.hands]
             print('Left hand: {:5.2f}%, Right hand: {:5.2f}%'.format(*hand_freq))
+
+            finger_freq = [x / self.keystrokes * 100 for x in self.fingers]
+            print(', '.join('{}:{:5.2f}%'.format(*k) for k in enumerate(finger_freq)))
 
     def __repr__(self):
         if self.keystrokes > 0:
