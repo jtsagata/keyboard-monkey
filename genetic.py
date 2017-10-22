@@ -6,12 +6,13 @@ from corpus_text import CorpusText
 from typist import Typist
 from keyboard_layout import *
 
-import multiprocessing
 # set to the number of cores you want to use
+import multiprocessing
 CORES = min(multiprocessing.cpu_count(), 8)
 
+
 class Population:
-    def __init__(self, filename, population_size=13, mutations=8, fix_mutations=2):
+    def __init__(self, filename, population_size=50, mutations=8, fix_mutations=2):
         self.corpus = CorpusText(filename)
         self.population_size = population_size
 
@@ -23,6 +24,8 @@ class Population:
             self.keyboards.append(keyboard)
         self.generation = 0
         self.fintess_store = []
+        self.sessions = None
+        self.training_time = 0
         self.fix_mutations = fix_mutations
         self.update()
 
@@ -44,19 +47,18 @@ class Population:
         # Store last best fastnesses
         self.fintess_store.append(self.sessions[0].fitness)
 
-
     def step(self):
         keeep_top = self.population_size // 3
-        self.keyboards =[]
+        self.keyboards = []
         # Elitist strategy
         for i in range(keeep_top):
             self.keyboards.append(KeyboardLayout(self.sessions[i].keyboard.layout))
-        for i in range(self.population_size-keeep_top):
+        for i in range(self.population_size - keeep_top):
             p1 = random.randrange(keeep_top)
             while True:
                 p2 = random.randrange(keeep_top)
                 if p1 != p2:
-                    break;
+                    break
             X = self.keyboards[p1]
             Y = self.keyboards[p2]
             C = X.sex(Y)
@@ -66,18 +68,18 @@ class Population:
 
     def keep_going(self):
         MAX_RUNS = 1000
-        moving_length  = 10
+        moving_length = 10
         check_every = 20
         N2 = 3
         if population.generation % check_every == 0:
-            conv = numpy.convolve(self.fintess_store, numpy.ones((moving_length,))/moving_length, mode='valid')
+            conv = numpy.convolve(self.fintess_store, numpy.ones((moving_length,)) / moving_length, mode='valid')
             # If conv stays the same for N2 runs then pause
             last = conv[-N2:]
-            if math.isclose(numpy.mean(last),conv[-1],abs_tol=0.00001) and len(last) >= N2:
+            if math.isclose(numpy.mean(last), conv[-1], abs_tol=0.00001) and len(last) >= N2:
                 # print("Convolution stop at ",conv[-1])
                 return False
-            # else:
-            #     print("** Convolution",conv[-N2:])
+                # else:
+                #     print("** Convolution",conv[-N2:])
         return self.generation < MAX_RUNS
 
     def print_population(self, details=False):
@@ -114,5 +116,5 @@ if __name__ == '__main__':
     print(best)
 
     print("\nStatistics:")
-    s=population.sessions[0]
+    s = population.sessions[0]
     s.print_stats()

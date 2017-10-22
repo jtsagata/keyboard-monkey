@@ -1,0 +1,16 @@
+http://mtgap.bilfo.com/keyboard.html
+Code [Ruby!] http://mtgap.bilfo.com/keyboards.zip
+
+Evolve Keyboard Layout
+======================
+https://bitbucket.org/ArneBab/evolve-keyboard-layout
+Python!
+
+Software
+========
+* https://github.com/alexriss/keyboard-layout-converter
+  The python file converts a Windows .klc file (which can be created using the Microsoft Keyboard Layout Creator
+  or KbdEdit) to a .xkb file, which can be used under Linux.
+* https://github.com/adobe-type-tools/keyboard-layouts
+  This Python script is intended for converting Mac keyboard layouts to Windows .klc files, the input format for
+  “Microsoft Keyboard Layout Creator” (MSKLC).
