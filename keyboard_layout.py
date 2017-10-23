@@ -132,12 +132,12 @@ class KeyboardLayout:
 QuertyKeyboard = KeyboardLayout()
 
 if __name__ == '__main__':
-    print("A starting querty keyboard")
-    print(QuertyKeyboard)
-    print()
+#    print("A starting querty keyboard")
+#    print(QuertyKeyboard)
+#    print()
 
-    # print("A starting querty keyboard with costs")
-    # print(QuertyKeyboard.keybord_costs())
+    print("A starting querty keyboard with costs")
+    print(QuertyKeyboard.keybord_costs())
 
 
     # print("\nA mutating keyboard")
