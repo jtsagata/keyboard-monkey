@@ -66,7 +66,7 @@ class Typist:
 
 
 if __name__ == '__main__':
-    path = 'data/longus.txt'
+    path = 'data/longus_full.txt'
     # path = 'data/alphabet.txt'
     corpus = CorpusText(path)
 

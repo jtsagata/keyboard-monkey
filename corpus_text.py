@@ -117,7 +117,7 @@ if __name__ == '__main__':
     # Get some text
     # path = 'data/longos_intro.txt'
     # path = 'data/alphabet.txt'
-    path = 'data/longus.txt'
+    path = 'data/longus_full.txt'
     # corpus = CorpusText(path, 200)
     corpus = CorpusText(path)
     print_long_text(corpus.__str__())

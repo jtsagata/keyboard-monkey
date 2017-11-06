@@ -102,7 +102,7 @@ class Population:
 
 
 if __name__ == '__main__':
-    population = Population('data/longus.txt')
+    population = Population('data/longus_full.txt')
     population.print_population(False)
 
     while True:
